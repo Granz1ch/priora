@@ -1,0 +1,33 @@
+# Blueprint для Render: Dashboard → New → Blueprint → выбрать репозиторий → Apply.
+# Render сам прочитает этот файл и спросит только BOT_TOKEN.
+services:
+  - type: web                      # web, а не worker: воркеры на Free недоступны,
+    name: sim-roulette             #   а у нас есть HTTP /health для порта и самопинга
+    runtime: python
+    region: frankfurt
+    plan: free                     # starter ($7/мес) — без засыпания и с возможностью подключить диск
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    healthCheckPath: /health
+    autoDeployTrigger: commit      # каждый push в ветку = новый деплой
+    envVars:
+      - key: BOT_TOKEN
+        sync: false                # секрет — Render попросит ввести при создании
+      # ADMIN_IDS не нужен: владельцы прописаны в коде (simbot/config.py → OWNER_IDS)
+      - key: API_BASE
+        value: https://shapitogram.xyz
+      - key: DB_PATH
+        value: simbot.sqlite3      # на Free файловая система НЕ сохраняется между деплоями/рестартами!
+        # value: /var/data/simbot.sqlite3   # ← для платного плана с диском (см. ниже)
+      - key: POLL_TIMEOUT
+        value: "25"
+      - key: LOG_LEVEL
+        value: INFO
+      # - key: PYTHON_VERSION      # при необходимости зафиксировать версию Python
+      #   value: "3.13.7"
+      # PORT и RENDER_EXTERNAL_URL Render выставляет сам: порт для /health и URL для самопинга.
+    # Постоянное хранилище (только платные инстансы; Free диски не поддерживает):
+    # disk:
+    #   name: data
+    #   mountPath: /var/data
+    #   sizeGB: 1
