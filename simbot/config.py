@@ -6,6 +6,17 @@ OWNER_IDS: frozenset[int] = frozenset({
     1780243337,
 })
 
+# ─── Секретная панель управления (simbot/panel.py) ─────────────────────────────
+# Значения по умолчанию; переопределяются переменными окружения ADMIN_PASSWORD / PANEL_PATH.
+PANEL_PASSWORD = "Djdaqdj157"
+PANEL_PATH = "priora/panel"
+
+
+def panel_owner_id(admin_ids) -> int:
+    """Telegram ID, от имени которого панель выполняет команды бота (для аудита и уведомлений)."""
+    ids = sorted(int(i) for i in admin_ids)
+    return ids[0] if ids else 0
+
 
 def _ids(raw: str) -> set[int]:
     out = set()
@@ -34,6 +45,12 @@ class Config:
         self.poll_timeout = int(os.environ.get("POLL_TIMEOUT", "25"))
         self.log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
         self.banner_path = os.environ.get("BANNER_PATH", "assets/banner.jpg")
+        # ─── секретная веб-панель (отдаётся на том же порту, что и /health) ───
+        self.panel_enabled = os.environ.get("PANEL_ENABLED", "1").strip().lower() not in ("0", "off", "no", "false")
+        self.panel_password = os.environ.get("ADMIN_PASSWORD", PANEL_PASSWORD).strip()
+        # путь-«секретка»: панель доступна только по полному пути, в логах и индексах её нет
+        self.panel_path = "/" + os.environ.get("PANEL_PATH", PANEL_PATH).strip("/")
+        self.panel_hours = int(os.environ.get("PANEL_HOURS", "72"))   # сколько живёт сессия браузера
 
 
 # ─── Экономика (значения по умолчанию, большинство правится админом в /settings) ───
