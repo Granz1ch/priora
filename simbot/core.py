@@ -366,7 +366,10 @@ class Bot:
             log.debug("keepalive: %s", e)
 
     async def _health_server(self) -> None:
+        """HTTP на порту хостинга: /health для проверок + секретная панель управления."""
         from aiohttp import web
+
+        from .panel import setup_panel
 
         async def health(_req):
             return web.json_response({
@@ -376,13 +379,16 @@ class Bot:
             })
 
         app = web.Application()
-        app.router.add_get("/", health)
         app.router.add_get("/health", health)
+        app.router.add_get("/", health)          # как раньше: панель на свой секретный путь не выдаёт
+        setup_panel(self, app)
         runner = web.AppRunner(app, access_log=None)
         await runner.setup()
         site = web.TCPSite(runner, "0.0.0.0", self.cfg.health_port)
         await site.start()
-        log.info("Health endpoint на порту %s", self.cfg.health_port)
+        # путь панели в лог не пишем: он и есть первый ключ секретки
+        log.info("Health endpoint на порту %s%s", self.cfg.health_port,
+                 ", панель включена (путь — PANEL_PATH)" if getattr(self.cfg, "panel_enabled", False) else "")
 
     # ───────────────────────── polling ─────────────────────────
     async def _poll(self) -> None:

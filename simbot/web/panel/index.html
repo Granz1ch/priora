@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Priora · панель управления</title>
+<link rel="icon" href="__BASE__/favicon.svg">
+<link rel="stylesheet" href="__BASE__/app.css">
+</head>
+<body>
+
+<!-- ─── экран входа ─── -->
+<section id="gate" class="gate">
+  <form id="login-form" class="card gate-card" autocomplete="off">
+    <div class="gate-logo">🎰</div>
+    <h1>СИМ-Рулетка <span class="dim">· панель</span></h1>
+    <p class="dim small">Служебный доступ. Всё, что здесь делается, попадает в журнал <code>аудит</code>.</p>
+    <label class="fld">
+      <span>Пароль</span>
+      <input id="pw" type="password" autocomplete="current-password" spellcheck="false" required>
+      <button type="button" class="peek" id="pw-peek" title="показать">👁</button>
+    </label>
+    <button class="btn primary wide" type="submit" id="login-btn">Войти</button>
+    <div id="login-msg" class="err small"></div>
+    <div class="dim tiny mt">Закрытая ссылка: путь и пароль знаете только вы.</div>
+  </form>
+</section>
+
+<!-- ─── интерфейс ─── -->
+<div id="app" class="hidden">
+  <header class="top">
+    <div class="brand">🎰 <b>Priora</b><span class="dim"> · СИМ-Рулетка</span>
+      <span class="pill" id="bot-name">…</span>
+    </div>
+    <div class="kpis" id="top-kpis"></div>
+    <div class="top-actions">
+      <button class="btn ghost" id="btn-refresh" title="обновить данные (R)">⟳</button>
+      <label class="live"><input type="checkbox" id="live" checked> live</label>
+      <button class="btn ghost" id="btn-logout" title="выйти">выход</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+
+  <main id="view" class="view"><div class="loading">загрузка…</div></main>
+
+  <footer class="foot">
+    <span id="foot-info" class="dim tiny"></span>
+  </footer>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="modal" class="modal hidden"></div>
+
+<script src="__BASE__/app.js"></script>
+</body>
+</html>
